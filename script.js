@@ -1,87 +1,213 @@
-// ================================
-// تريلات العراق - JavaScript
-// ================================
+// ========================================
+// حمولتي - Main JavaScript
+// ========================================
 
-// البحث
-const searchInput = document.querySelector(".search-box input");
-const categories = document.querySelectorAll(".category");
-const truckCards = document.querySelectorAll(".truck-card");
 
-if (searchInput) {
-    searchInput.addEventListener("input", function () {
-        const searchText = this.value.trim().toLowerCase();
+// ========================================
+// فتح نموذج إضافة حمولة
+// ========================================
 
-        // البحث داخل الأقسام
-        categories.forEach(function (category) {
-            const text = category.innerText.toLowerCase();
+function showCargoForm() {
 
-            if (text.includes(searchText)) {
-                category.style.display = "";
-            } else {
-                category.style.display = "none";
-            }
+    const modal = document.getElementById("cargoModal");
+
+    if (modal) {
+        modal.classList.add("active");
+        document.body.style.overflow = "hidden";
+    }
+}
+
+
+// ========================================
+// إغلاق النموذج
+// ========================================
+
+function closeModal() {
+
+    const modal = document.getElementById("cargoModal");
+
+    if (modal) {
+        modal.classList.remove("active");
+        document.body.style.overflow = "";
+    }
+}
+
+
+// ========================================
+// عرض طلبات النقل
+// ========================================
+
+function showAvailableLoads() {
+
+    const loadsSection =
+        document.querySelector(".loads-section");
+
+    if (loadsSection) {
+
+        loadsSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
         });
 
-        // البحث داخل الإعلانات
-        truckCards.forEach(function (card) {
-            const text = card.innerText.toLowerCase();
+    }
+}
 
-            if (text.includes(searchText)) {
-                card.style.display = "";
-            } else {
-                card.style.display = "none";
-            }
-        });
+
+// ========================================
+// قبول طلب نقل
+// ========================================
+
+function acceptLoad(route) {
+
+    const confirmed = confirm(
+        "هل تريد الموافقة على طلب النقل؟\n\n" +
+        route
+    );
+
+    if (confirmed) {
+
+        alert(
+            "تم إرسال موافقتك على الطلب 🚛\n\n" +
+            "سيظهر لصاحب الحمولة أنك مهتم بالطلب."
+        );
+
+    }
+}
+
+
+// ========================================
+// نشر طلب الحمولة
+// ========================================
+
+function publishCargo() {
+
+    const from =
+        document.getElementById("fromLocation").value.trim();
+
+    const to =
+        document.getElementById("toLocation").value.trim();
+
+    const cargo =
+        document.getElementById("cargoType").value.trim();
+
+    const weight =
+        document.getElementById("cargoWeight").value.trim();
+
+    const truck =
+        document.getElementById("truckType").value;
+
+    const price =
+        document.getElementById("cargoPrice").value.trim();
+
+
+    // التحقق من البيانات
+
+    if (!from ||
+        !to ||
+        !cargo ||
+        !weight ||
+        !truck ||
+        !price) {
+
+        alert(
+            "يرجى إكمال جميع معلومات الحمولة."
+        );
+
+        return;
+    }
+
+
+    // رسالة نجاح مؤقتة
+
+    alert(
+        "تم تجهيز طلب النقل بنجاح 🚛\n\n" +
+
+        "من: " + from + "\n" +
+        "إلى: " + to + "\n" +
+        "الحمولة: " + cargo + "\n" +
+        "الوزن: " + weight + "\n" +
+        "الشاحنة: " + truck + "\n" +
+        "السعر: " + Number(price).toLocaleString("ar-IQ") +
+        " د.ع"
+    );
+
+
+    // إغلاق النموذج
+
+    closeModal();
+
+
+    // تنظيف الحقول
+
+    document.getElementById("fromLocation").value = "";
+    document.getElementById("toLocation").value = "";
+    document.getElementById("cargoType").value = "";
+    document.getElementById("cargoWeight").value = "";
+    document.getElementById("truckType").value = "";
+    document.getElementById("cargoPrice").value = "";
+}
+
+
+// ========================================
+// الصفحة الرئيسية
+// ========================================
+
+function goHome() {
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
     });
 }
 
 
-// ================================
-// الضغط على الأقسام
-// ================================
+// ========================================
+// الحساب
+// ========================================
 
-categories.forEach(function (category) {
+function showProfile() {
 
-    category.addEventListener("click", function () {
-
-        const title = this.querySelector("h3");
-
-        if (!title) return;
-
-        const categoryName = title.innerText;
-
-        alert("اخترت قسم: " + categoryName);
-
-    });
-
-});
+    alert(
+        "الحساب الشخصي\n\n" +
+        "تسجيل الدخول وإنشاء الحساب " +
+        "سيتم إضافته لاحقاً."
+    );
+}
 
 
-// ================================
-// زر عرض التفاصيل
-// ================================
+// ========================================
+// إغلاق النافذة عند الضغط خارجها
+// ========================================
 
-const detailButtons = document.querySelectorAll(".button");
+const cargoModal =
+    document.getElementById("cargoModal");
 
-detailButtons.forEach(function (button) {
+if (cargoModal) {
 
-    button.addEventListener("click", function (event) {
+    cargoModal.addEventListener(
+        "click",
+        function (event) {
 
-        event.preventDefault();
+            if (event.target === cargoModal) {
+                closeModal();
+            }
 
-        alert("صفحة تفاصيل الإعلان ستتوفر قريباً 🚛");
-
-    });
-
-});
+        }
+    );
+}
 
 
-// ================================
-// رسالة عند تحميل الموقع
-// ================================
+// ========================================
+// تشغيل الموقع
+// ========================================
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-    console.log("تم تشغيل موقع تريلات العراق بنجاح 🚛");
+        console.log(
+            "🚛 حمولتي - تم تشغيل الموقع بنجاح"
+        );
 
-});
+    }
+);

@@ -2,23 +2,31 @@
 <html lang="ar" dir="rtl">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
     <meta name="theme-color" content="#111111">
-<link rel="manifest" href="manifest.json">
 
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="حمولتي">
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- iPhone -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="حمولتي">
+
     <title>حمولتي - نقل الحمولات في العراق</title>
 
     <link rel="stylesheet" href="style.css">
+
 </head>
 
+
 <body>
+
 
     <!-- =========================
          Header
@@ -31,18 +39,29 @@
         </div>
 
         <div class="header-text">
-            <h1>حمولتي</h1>
-            <p>منصة تربط أصحاب الحمولات بالسائقين</p>
+
+            <h1>
+                حمولتي
+            </h1>
+
+            <p>
+                منصة تربط أصحاب الحمولات بالسائقين
+            </p>
+
         </div>
 
     </header>
 
 
+
     <!-- =========================
-         Welcome
+         Main
     ========================== -->
 
     <main>
+
+
+        <!-- Welcome -->
 
         <section class="welcome">
 
@@ -58,16 +77,19 @@
         </section>
 
 
+
         <!-- =========================
              Main Actions
         ========================== -->
 
         <section class="main-actions">
 
+
             <!-- صاحب الحمولة -->
 
-            <button class="action-card cargo-action"
-                    onclick="showCargoForm()">
+            <button
+                class="action-card cargo-action"
+                onclick="showCargoForm()">
 
                 <div class="action-icon">
                     📦
@@ -92,10 +114,12 @@
             </button>
 
 
+
             <!-- السائق -->
 
-            <button class="action-card driver-action"
-                    onclick="showAvailableLoads()">
+            <button
+                class="action-card driver-action"
+                onclick="showAvailableLoads()">
 
                 <div class="action-icon">
                     🚛
@@ -119,7 +143,9 @@
 
             </button>
 
+
         </section>
+
 
 
         <!-- =========================
@@ -127,6 +153,7 @@
         ========================== -->
 
         <section class="loads-section">
+
 
             <div class="section-header">
 
@@ -139,6 +166,7 @@
                 </button>
 
             </div>
+
 
 
             <!-- Load 1 -->
@@ -195,13 +223,17 @@
                         800,000 د.ع
                     </strong>
 
-                    <button onclick="acceptLoad('بغداد → البصرة')">
+                    <button
+                        onclick="acceptLoad('بغداد → البصرة')">
+
                         أوافق على الطلب
+
                     </button>
 
                 </div>
 
             </article>
+
 
 
             <!-- Load 2 -->
@@ -258,13 +290,17 @@
                         950,000 د.ع
                     </strong>
 
-                    <button onclick="acceptLoad('أربيل → بغداد')">
+                    <button
+                        onclick="acceptLoad('أربيل → بغداد')">
+
                         أوافق على الطلب
+
                     </button>
 
                 </div>
 
             </article>
+
 
 
             <!-- Load 3 -->
@@ -321,15 +357,20 @@
                         600,000 د.ع
                     </strong>
 
-                    <button onclick="acceptLoad('كركوك → الموصل')">
+                    <button
+                        onclick="acceptLoad('كركوك → الموصل')">
+
                         أوافق على الطلب
+
                     </button>
 
                 </div>
 
             </article>
 
+
         </section>
+
 
 
         <!-- =========================
@@ -396,7 +437,9 @@
 
         </section>
 
+
     </main>
+
 
 
     <!-- =========================
@@ -404,6 +447,7 @@
     ========================== -->
 
     <nav class="bottom-nav">
+
 
         <button onclick="goHome()">
 
@@ -456,29 +500,39 @@
 
         </button>
 
+
     </nav>
 
 
+
     <!-- =========================
-         Cargo Form
+         Cargo Modal
     ========================== -->
 
     <div id="cargoModal" class="modal">
 
+
         <div class="modal-content">
 
-            <button class="close-btn"
-                    onclick="closeModal()">
+
+            <button
+                class="close-btn"
+                onclick="closeModal()">
+
                 ×
+
             </button>
+
 
             <h2>
                 أضف طلب نقل
             </h2>
 
+
             <p>
                 أدخل معلومات الحمولة
             </p>
+
 
 
             <label>
@@ -491,6 +545,7 @@
                 placeholder="مثلاً: بغداد">
 
 
+
             <label>
                 مكان التفريغ
             </label>
@@ -499,6 +554,7 @@
                 type="text"
                 id="toLocation"
                 placeholder="مثلاً: البصرة">
+
 
 
             <label>
@@ -511,6 +567,7 @@
                 placeholder="مثلاً: مواد غذائية">
 
 
+
             <label>
                 الوزن
             </label>
@@ -519,6 +576,7 @@
                 type="text"
                 id="cargoWeight"
                 placeholder="مثلاً: 20 طن">
+
 
 
             <label>
@@ -554,6 +612,7 @@
             </select>
 
 
+
             <label>
                 السعر المقترح
             </label>
@@ -564,16 +623,20 @@
                 placeholder="مثلاً: 800000">
 
 
-            <button class="submit-btn"
-                    onclick="publishCargo()">
+
+            <button
+                class="submit-btn"
+                onclick="publishCargo()">
 
                 نشر طلب النقل
 
             </button>
 
+
         </div>
 
     </div>
+
 
 
     <!-- =========================
@@ -581,6 +644,48 @@
     ========================== -->
 
     <script src="script.js"></script>
+
+
+
+    <!-- =========================
+         Service Worker
+    ========================== -->
+
+    <script>
+
+        if ("serviceWorker" in navigator) {
+
+            window.addEventListener(
+                "load",
+                function () {
+
+                    navigator.serviceWorker
+                        .register("./service-worker.js")
+
+                        .then(function () {
+
+                            console.log(
+                                "حمولتي يعمل كتطبيق"
+                            );
+
+                        })
+
+                        .catch(function (error) {
+
+                            console.log(
+                                "Service Worker Error:",
+                                error
+                            );
+
+                        });
+
+                }
+            );
+
+        }
+
+    </script>
+
 
 </body>
 

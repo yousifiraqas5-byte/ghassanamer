@@ -1,266 +1,583 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
 
-    <!-- مناسب لشاشات الآيفون والموبايلات -->
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-    <title>تريلات العراق</title>
+    <meta name="theme-color" content="#111111">
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    <title>حمولتي - نقل الحمولات في العراق</title>
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont,
-                         "Segoe UI", Arial, sans-serif;
-            background: #f5f5f5;
-            color: #222;
-            min-height: 100vh;
-        }
-
-        /* رأس الموقع */
-        header {
-            background: #111;
-            color: white;
-            padding: 18px 16px;
-            padding-top: max(18px, env(safe-area-inset-top));
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 25px;
-            margin-bottom: 6px;
-        }
-
-        header p {
-            font-size: 14px;
-            color: #ccc;
-        }
-
-        /* البحث */
-        .search-box {
-            padding: 15px;
-            background: white;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-        }
-
-        .search-box input {
-            width: 100%;
-            height: 48px;
-            border: 1px solid #ddd;
-            border-radius: 14px;
-            padding: 0 16px;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .search-box input:focus {
-            border-color: #111;
-        }
-
-        /* المحتوى */
-        main {
-            width: 100%;
-            max-width: 600px;
-            margin: auto;
-            padding: 15px;
-        }
-
-        .section-title {
-            font-size: 21px;
-            font-weight: bold;
-            margin: 8px 0 15px;
-        }
-
-        /* بطاقات الأقسام */
-        .categories {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-        }
-
-        .category {
-            background: white;
-            border-radius: 18px;
-            padding: 20px 10px;
-            text-align: center;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-            cursor: pointer;
-            transition: transform 0.15s;
-        }
-
-        .category:active {
-            transform: scale(0.96);
-        }
-
-        .category .icon {
-            font-size: 38px;
-            margin-bottom: 8px;
-        }
-
-        .category h3 {
-            font-size: 16px;
-        }
-
-        .category p {
-            font-size: 12px;
-            color: #777;
-            margin-top: 5px;
-        }
-
-        /* بطاقة إعلان */
-        .truck-card {
-            background: white;
-            margin-top: 15px;
-            border-radius: 18px;
-            overflow: hidden;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-        }
-
-        .truck-image {
-            width: 100%;
-            height: 190px;
-            background: #ddd;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-        }
-
-        .truck-info {
-            padding: 15px;
-        }
-
-        .truck-info h3 {
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-
-        .truck-info p {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
-
-        .button {
-            display: block;
-            width: 100%;
-            border: none;
-            border-radius: 12px;
-            padding: 13px;
-            margin-top: 12px;
-            background: #111;
-            color: white;
-            font-size: 16px;
-            text-align: center;
-            text-decoration: none;
-        }
-
-        /* أسفل الصفحة */
-        footer {
-            text-align: center;
-            padding: 30px 15px;
-            padding-bottom: max(30px, env(safe-area-inset-bottom));
-            color: #777;
-            font-size: 13px;
-        }
-
-        /* آيفون صغير */
-        @media (max-width: 375px) {
-            header h1 {
-                font-size: 22px;
-            }
-
-            .categories {
-                gap: 8px;
-            }
-
-            .category {
-                padding: 16px 8px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<header>
-    <h1>🚛 تريلات العراق</h1>
-    <p>دليل التريلات والخدمات في العراق</p>
-</header>
+    <!-- =========================
+         Header
+    ========================== -->
 
-<div class="search-box">
-    <input type="search" placeholder="🔍 ابحث عن تريلة أو خدمة...">
-</div>
+    <header class="main-header">
 
-<main>
-
-    <h2 class="section-title">الأقسام</h2>
-
-    <div class="categories">
-
-        <div class="category">
-            <div class="icon">🚛</div>
-            <h3>تريلات للبيع</h3>
-            <p>تصفح التريلات</p>
-        </div>
-
-        <div class="category">
-            <div class="icon">🚚</div>
-            <h3>تريلات للإيجار</h3>
-            <p>إيجار التريلات</p>
-        </div>
-
-        <div class="category">
-            <div class="icon">🔧</div>
-            <h3>تصليح وصيانة</h3>
-            <p>ورش وخدمات</p>
-        </div>
-
-        <div class="category">
-            <div class="icon">🛞</div>
-            <h3>قطع غيار</h3>
-            <p>قطع ومستلزمات</p>
-        </div>
-
-    </div>
-
-    <h2 class="section-title" style="margin-top:25px;">
-        أحدث الإعلانات
-    </h2>
-
-    <div class="truck-card">
-
-        <div class="truck-image">
+        <div class="logo">
             🚛
         </div>
 
-        <div class="truck-info">
-            <h3>تريلة للبيع</h3>
-            <p>📍 بغداد</p>
-            <p>💰 السعر: اتصل لمعرفة السعر</p>
+        <div class="header-text">
+            <h1>حمولتي</h1>
+            <p>منصة تربط أصحاب الحمولات بالسائقين</p>
+        </div>
 
-            <a href="#" class="button">
-                عرض التفاصيل
-            </a>
+    </header>
+
+
+    <!-- =========================
+         Welcome
+    ========================== -->
+
+    <main>
+
+        <section class="welcome">
+
+            <h2>
+                حمّلتك تحتاج سائق؟
+            </h2>
+
+            <p>
+                انشر طلب النقل وخلي السواق يشوفونه
+                ويختارون الطلب المناسب لهم.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             Main Actions
+        ========================== -->
+
+        <section class="main-actions">
+
+            <!-- صاحب الحمولة -->
+
+            <button class="action-card cargo-action"
+                    onclick="showCargoForm()">
+
+                <div class="action-icon">
+                    📦
+                </div>
+
+                <div class="action-content">
+
+                    <h3>
+                        عندي حمولة
+                    </h3>
+
+                    <p>
+                        أريد سائق ينقل حمولتي
+                    </p>
+
+                </div>
+
+                <span class="arrow">
+                    ←
+                </span>
+
+            </button>
+
+
+            <!-- السائق -->
+
+            <button class="action-card driver-action"
+                    onclick="showAvailableLoads()">
+
+                <div class="action-icon">
+                    🚛
+                </div>
+
+                <div class="action-content">
+
+                    <h3>
+                        أنا سائق
+                    </h3>
+
+                    <p>
+                        أبحث عن حمولة للنقل
+                    </p>
+
+                </div>
+
+                <span class="arrow">
+                    ←
+                </span>
+
+            </button>
+
+        </section>
+
+
+        <!-- =========================
+             Available Loads
+        ========================== -->
+
+        <section class="loads-section">
+
+            <div class="section-header">
+
+                <h2>
+                    طلبات النقل الحالية
+                </h2>
+
+                <button onclick="showAvailableLoads()">
+                    عرض الكل
+                </button>
+
+            </div>
+
+
+            <!-- Load 1 -->
+
+            <article class="load-card">
+
+                <div class="load-top">
+
+                    <span class="load-status">
+                        متاح
+                    </span>
+
+                    <span class="load-time">
+                        منذ 10 دقائق
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    بغداد → البصرة
+                </h3>
+
+
+                <div class="load-info">
+
+                    <div>
+                        📦
+                        <span>
+                            مواد غذائية
+                        </span>
+                    </div>
+
+                    <div>
+                        ⚖️
+                        <span>
+                            20 طن
+                        </span>
+                    </div>
+
+                    <div>
+                        🚛
+                        <span>
+                            تريلة سطحة
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="load-bottom">
+
+                    <strong>
+                        800,000 د.ع
+                    </strong>
+
+                    <button onclick="acceptLoad('بغداد → البصرة')">
+                        أوافق على الطلب
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <!-- Load 2 -->
+
+            <article class="load-card">
+
+                <div class="load-top">
+
+                    <span class="load-status">
+                        متاح
+                    </span>
+
+                    <span class="load-time">
+                        منذ 25 دقيقة
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    أربيل → بغداد
+                </h3>
+
+
+                <div class="load-info">
+
+                    <div>
+                        📦
+                        <span>
+                            بضائع تجارية
+                        </span>
+                    </div>
+
+                    <div>
+                        ⚖️
+                        <span>
+                            15 طن
+                        </span>
+                    </div>
+
+                    <div>
+                        🚛
+                        <span>
+                            تريلة مغلقة
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="load-bottom">
+
+                    <strong>
+                        950,000 د.ع
+                    </strong>
+
+                    <button onclick="acceptLoad('أربيل → بغداد')">
+                        أوافق على الطلب
+                    </button>
+
+                </div>
+
+            </article>
+
+
+            <!-- Load 3 -->
+
+            <article class="load-card">
+
+                <div class="load-top">
+
+                    <span class="load-status">
+                        متاح
+                    </span>
+
+                    <span class="load-time">
+                        منذ ساعة
+                    </span>
+
+                </div>
+
+
+                <h3>
+                    كركوك → الموصل
+                </h3>
+
+
+                <div class="load-info">
+
+                    <div>
+                        📦
+                        <span>
+                            مواد بناء
+                        </span>
+                    </div>
+
+                    <div>
+                        ⚖️
+                        <span>
+                            25 طن
+                        </span>
+                    </div>
+
+                    <div>
+                        🚛
+                        <span>
+                            قلاب
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="load-bottom">
+
+                    <strong>
+                        600,000 د.ع
+                    </strong>
+
+                    <button onclick="acceptLoad('كركوك → الموصل')">
+                        أوافق على الطلب
+                    </button>
+
+                </div>
+
+            </article>
+
+        </section>
+
+
+        <!-- =========================
+             Features
+        ========================== -->
+
+        <section class="features">
+
+            <h2>
+                شلون تشتغل المنصة؟
+            </h2>
+
+
+            <div class="feature">
+
+                <div>
+                    📦
+                </div>
+
+                <p>
+                    صاحب الحمولة ينشر طلب النقل
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div>
+                    🔔
+                </div>
+
+                <p>
+                    السواق يشوفون الطلبات المتاحة
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div>
+                    🤝
+                </div>
+
+                <p>
+                    السائق يوافق وصاحب الحمولة يختار
+                </p>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div>
+                    🚛
+                </div>
+
+                <p>
+                    يتم الاتفاق على النقل
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         Bottom Navigation
+    ========================== -->
+
+    <nav class="bottom-nav">
+
+        <button onclick="goHome()">
+
+            <span>
+                🏠
+            </span>
+
+            <small>
+                الرئيسية
+            </small>
+
+        </button>
+
+
+        <button onclick="showAvailableLoads()">
+
+            <span>
+                📦
+            </span>
+
+            <small>
+                الطلبات
+            </small>
+
+        </button>
+
+
+        <button onclick="showCargoForm()">
+
+            <span>
+                ➕
+            </span>
+
+            <small>
+                أضف حمولة
+            </small>
+
+        </button>
+
+
+        <button onclick="showProfile()">
+
+            <span>
+                👤
+            </span>
+
+            <small>
+                حسابي
+            </small>
+
+        </button>
+
+    </nav>
+
+
+    <!-- =========================
+         Cargo Form
+    ========================== -->
+
+    <div id="cargoModal" class="modal">
+
+        <div class="modal-content">
+
+            <button class="close-btn"
+                    onclick="closeModal()">
+                ×
+            </button>
+
+            <h2>
+                أضف طلب نقل
+            </h2>
+
+            <p>
+                أدخل معلومات الحمولة
+            </p>
+
+
+            <label>
+                مكان التحميل
+            </label>
+
+            <input
+                type="text"
+                id="fromLocation"
+                placeholder="مثلاً: بغداد">
+
+
+            <label>
+                مكان التفريغ
+            </label>
+
+            <input
+                type="text"
+                id="toLocation"
+                placeholder="مثلاً: البصرة">
+
+
+            <label>
+                نوع الحمولة
+            </label>
+
+            <input
+                type="text"
+                id="cargoType"
+                placeholder="مثلاً: مواد غذائية">
+
+
+            <label>
+                الوزن
+            </label>
+
+            <input
+                type="text"
+                id="cargoWeight"
+                placeholder="مثلاً: 20 طن">
+
+
+            <label>
+                نوع الشاحنة المطلوبة
+            </label>
+
+            <select id="truckType">
+
+                <option value="">
+                    اختر نوع الشاحنة
+                </option>
+
+                <option>
+                    سطحة
+                </option>
+
+                <option>
+                    براد
+                </option>
+
+                <option>
+                    قلاب
+                </option>
+
+                <option>
+                    تريلة مغلقة
+                </option>
+
+                <option>
+                    أخرى
+                </option>
+
+            </select>
+
+
+            <label>
+                السعر المقترح
+            </label>
+
+            <input
+                type="number"
+                id="cargoPrice"
+                placeholder="مثلاً: 800000">
+
+
+            <button class="submit-btn"
+                    onclick="publishCargo()">
+
+                نشر طلب النقل
+
+            </button>
+
         </div>
 
     </div>
 
-</main>
 
-<footer>
-    © 2026 تريلات العراق
-</footer>
+    <!-- =========================
+         JavaScript
+    ========================== -->
+
+    <script src="script.js"></script>
 
 </body>
+
 </html>

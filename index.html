@@ -304,11 +304,11 @@
 
         <button onclick="showProfile()">
 
-            <span>
+            <span id="accountNavIcon">
                 👤
             </span>
 
-            <small>
+            <small id="accountNavLabel">
                 حسابي
             </small>
 
@@ -573,11 +573,412 @@
 
 
     <!-- =========================
+         Pull to Refresh
+    ========================== -->
+
+    <div
+        class="pull-refresh"
+        id="pullRefreshIndicator"
+        aria-hidden="true">
+
+        <span class="pull-refresh-spinner">
+            🔄
+        </span>
+
+        <span class="pull-refresh-label" id="pullRefreshLabel">
+        </span>
+
+    </div>
+
+
+
+    <!-- =========================
+         Account Modal
+    ========================== -->
+
+    <div id="accountModal" class="modal">
+
+
+        <div class="modal-content">
+
+
+            <button
+                class="close-btn"
+                onclick="closeAccountModal()">
+
+                ×
+
+            </button>
+
+
+            <h2>
+                حسابي
+            </h2>
+
+
+            <p>
+                سجّل دخولك برقم هاتفك العراقي
+            </p>
+
+
+            <!-- خطأ عام (يظهر في أي عرض) -->
+
+            <div
+                class="account-error general"
+                id="accountGeneralError"
+                hidden>
+            </div>
+
+
+
+            <!-- =========================
+                 العرض: غير مسجّل الدخول
+            ========================== -->
+
+            <div
+                class="account-view"
+                id="accountLoggedOutView">
+
+
+                <p class="account-subtitle">
+                    سجّل دخولك برقم هاتفك حتى يصير حسابك جاهز
+                    لمتابعة حمولاتك وعروضك وربطها باسمك.
+                </p>
+
+
+                <div class="account-benefits">
+
+                    <div>
+                        👤 <span>اسمك ورقمك محفوظان بحسابك</span>
+                    </div>
+
+                    <div>
+                        📦 <span>متابعة حمولاتك وعروضك بسهولة</span>
+                    </div>
+
+                    <div>
+                        🚛 <span>استعداد لربط الطلبات بحسابك</span>
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="submit-btn"
+                    onclick="showAccountView('phone')">
+
+                    تسجيل الدخول برقم الهاتف
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 العرض: إدخال رقم الهاتف
+            ========================== -->
+
+            <div
+                class="account-view"
+                id="accountPhoneView">
+
+
+                <p class="account-subtitle">
+                    أدخل رقم هاتفك وسنرسل لك رمز تحقق (OTP) برسالة SMS.
+                </p>
+
+
+                <label for="accountPhone">
+                    رقم الهاتف
+                </label>
+
+
+                <div class="phone-row">
+
+                    <span class="phone-flag">
+                        🇮🇶 +964
+                    </span>
+
+                    <input
+                        type="tel"
+                        id="accountPhone"
+                        inputmode="numeric"
+                        autocomplete="tel"
+                        placeholder="07701234567">
+
+                </div>
+
+
+                <p class="account-hint">
+                    اكتب الرقم بأي صيغة: 07701234567 أو 7701234567
+                    أو +9647701234567 — ولا تكرّر مفتاح الدولة 964.
+                </p>
+
+
+                <p
+                    class="account-preview"
+                    id="accountPhonePreview"
+                    hidden>
+                </p>
+
+
+                <!-- حاوية reCAPTCHA المطلوبة لتسجيل الدخول بالهاتف على الويب -->
+
+                <div
+                    class="recaptcha-box"
+                    id="recaptcha-container">
+                </div>
+
+
+                <p
+                    class="account-error"
+                    id="accountPhoneError"
+                    hidden>
+                </p>
+
+
+                <button
+                    class="submit-btn"
+                    id="sendOtpBtn"
+                    onclick="sendOtp()">
+
+                    إرسال رمز التحقق
+
+                </button>
+
+
+                <button
+                    class="ghost-btn"
+                    onclick="showAccountView('loggedOut')">
+
+                    رجوع
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 العرض: إدخال رمز التحقق
+            ========================== -->
+
+            <div
+                class="account-view"
+                id="accountOtpView">
+
+
+                <p class="account-subtitle">
+                    أرسلنا رمز التحقق إلى
+                    <strong id="accountOtpPhone"></strong>
+                </p>
+
+
+                <label for="accountOtp">
+                    رمز التحقق (6 أرقام)
+                </label>
+
+
+                <input
+                    type="text"
+                    id="accountOtp"
+                    class="otp-input"
+                    inputmode="numeric"
+                    maxlength="6"
+                    autocomplete="one-time-code"
+                    placeholder="000000">
+
+
+                <p
+                    class="account-error"
+                    id="accountOtpError"
+                    hidden>
+                </p>
+
+
+                <button
+                    class="submit-btn"
+                    id="verifyOtpBtn"
+                    onclick="verifyOtp()">
+
+                    تحقق ودخول
+
+                </button>
+
+
+                <button
+                    class="ghost-btn"
+                    id="resendOtpBtn"
+                    onclick="resendOtp()">
+
+                    إعادة إرسال الرمز
+
+                </button>
+
+
+                <button
+                    class="ghost-btn"
+                    onclick="showAccountView('phone')">
+
+                    تغيير رقم الهاتف
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 العرض: إدخال الاسم (أول مرة)
+            ========================== -->
+
+            <div
+                class="account-view"
+                id="accountNameView">
+
+
+                <p class="account-subtitle">
+                    تم التحقق من رقم هاتفك ✅ — باقي بس اسمك.
+                </p>
+
+
+                <label for="accountNameInput">
+                    الاسم
+                </label>
+
+
+                <input
+                    type="text"
+                    id="accountNameInput"
+                    maxlength="40"
+                    autocomplete="name"
+                    placeholder="مثلاً: غسان عامر">
+
+
+                <p
+                    class="account-hint"
+                    id="accountNamePhoneHint">
+                </p>
+
+
+                <p
+                    class="account-error"
+                    id="accountNameError"
+                    hidden>
+                </p>
+
+
+                <button
+                    class="submit-btn"
+                    id="saveNameBtn"
+                    onclick="saveAccountName()">
+
+                    حفظ ومتابعة
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- =========================
+                 العرض: الحساب بعد تسجيل الدخول
+            ========================== -->
+
+            <div
+                class="account-view"
+                id="accountProfileView">
+
+
+                <div
+                    class="account-avatar"
+                    id="accountAvatar">
+
+                    👤
+
+                </div>
+
+
+                <h3
+                    class="account-name"
+                    id="accountNameDisplay">
+
+                    —
+
+                </h3>
+
+
+                <div class="account-info-row">
+
+                    <span class="account-info-icon">
+                        📱
+                    </span>
+
+                    <span
+                        class="account-info-value"
+                        id="accountPhoneDisplay"
+                        dir="ltr">
+
+                        —
+
+                    </span>
+
+                </div>
+
+
+                <div class="account-info-row">
+
+                    <span class="account-info-icon">
+                        🗓️
+                    </span>
+
+                    <span
+                        class="account-info-value"
+                        id="accountJoined">
+
+                        عضو جديد
+
+                    </span>
+
+                </div>
+
+
+                <p class="account-note">
+                    حسابك جاهز ✅ — ربط الطلبات والعروض بحسابك
+                    يصير بالمرحلة القادمة.
+                </p>
+
+
+                <button
+                    class="submit-btn logout-btn"
+                    id="logoutBtn"
+                    onclick="logoutAccount()">
+
+                    تسجيل الخروج
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
          Firebase SDK
     ========================== -->
 
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-auth-compat.js"></script>
     <script src="firebase-config.js"></script>
 
     <!-- =========================

@@ -10,9 +10,9 @@
 //
 // Services initialized:
 //   - Cloud Firestore (database for cargo/load requests)
+//   - Firebase Authentication (phone number sign-in: OTP code via SMS)
 //
 // Services NOT needed (not initialized):
-//   - Firebase Authentication (not used in current functionality)
 //   - Firebase Storage (no file uploads in the app)
 //   - Firebase Analytics (optional; omitted for minimal setup)
 
@@ -36,5 +36,19 @@ const db = firebase.firestore();
 // Make Firestore instance available globally for script.js to use
 window.db = db;
 window.firebaseApp = firebaseApp;
+
+// ========================================
+// Firebase Authentication (تسجيل الدخول برقم الهاتف)
+// ========================================
+
+// Initialize Firebase Authentication
+const auth = firebase.auth();
+
+// Show Firebase's built-in messages in Arabic (we still map our own Arabic
+// messages in script.js for the important cases)
+auth.languageCode = "ar";
+
+// Make Auth instance available globally for script.js to use
+window.auth = auth;
 
 console.log("حمولتي - Firebase initialized:", firebaseApp.name);

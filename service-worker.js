@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = "hamoulati-v4";
+const CACHE_NAME = "hamoulati-v6";
 
 const FILES_TO_CACHE = [
     "./",

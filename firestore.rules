@@ -1,6 +1,12 @@
 rules_version='2'
 
 service cloud.firestore {
+
+  // Helper: is the request coming from the owner of this account?
+  function isOwnerOfAccount(userId) {
+    return request.auth != null && request.auth.uid == userId;
+  }
+
   match /databases/{database}/documents {
     // Cargo/load requests published by cargo owners
     match /loads/{loadId} {
@@ -44,6 +50,36 @@ service cloud.firestore {
 
       // Status updates only (accepting/rejecting an offer)
       allow update: if resource.data.status == 'pending';
+
+      // No deletes allowed (prevent accidental data loss)
+      allow delete: if false;
+    }
+
+    // User profiles created by phone-number sign-in (Firebase Authentication)
+    // Document ID = Firebase Auth uid
+    // Data = { name, phone, createdAt, updatedAt }
+    match /users/{userId} {
+      // Only the signed-in owner can read their own profile
+      allow read: if isOwnerOfAccount(userId);
+
+      // Owner creates their own profile.
+      // The stored phone must match the verified phone number inside the ID token,
+      // so nobody can create a profile for someone else's number.
+      allow create: if isOwnerOfAccount(userId)
+        && request.resource.data.keys().hasAll([
+          'name',
+          'phone',
+          'createdAt',
+          'updatedAt'
+        ])
+        && request.resource.data.name is string
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.phone == request.auth.token.phone_number;
+
+      // Owner updates their own profile (name / phone / updatedAt).
+      // createdAt is never part of the update payload in the app.
+      allow update: if isOwnerOfAccount(userId)
+        && request.resource.data.phone == request.auth.token.phone_number;
 
       // No deletes allowed (prevent accidental data loss)
       allow delete: if false;

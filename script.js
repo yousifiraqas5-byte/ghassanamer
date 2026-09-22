@@ -1375,7 +1375,7 @@ function setupRecaptchaVerifier() {
                 resetRecaptchaVerifier();
             }
         },
-        window.auth
+        window.firebaseApp
     );
 }
 

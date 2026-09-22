@@ -40,15 +40,32 @@ window.firebaseApp = firebaseApp;
 // ========================================
 // Firebase Authentication (تسجيل الدخول برقم الهاتف)
 // ========================================
+// ملاحظة: تهيئة Auth آمنة — إذا ظهر خطأ invalid-api-key
+// (مثلاً لأن نطاق الموقع غير مضاف لقيود المفتاح في
+// Google Cloud Console) يبقى بقية الموقع يعمل بشكل طبيعي
+// ويظهر سبب المشكلة في الكونsole بدل توقّف الصفحة.
 
-// Initialize Firebase Authentication
-const auth = firebase.auth();
+let auth = null;
 
-// Show Firebase's built-in messages in Arabic (we still map our own Arabic
-// messages in script.js for the important cases)
-auth.languageCode = "ar";
+try {
+
+    // Initialize Firebase Authentication
+    auth = firebase.auth();
+
+    // Show Firebase's built-in messages in Arabic (we still map our own
+    // Arabic messages in script.js for the important cases)
+    auth.languageCode = "ar";
+
+} catch (authError) {
+
+    console.error(
+        "حمولتي - فشل تهيئة Firebase Authentication:",
+        authError && authError.code ? authError.code : authError
+    );
+}
 
 // Make Auth instance available globally for script.js to use
 window.auth = auth;
+window.authErrorCode = authError && authError.code ? authError.code : "";
 
 console.log("حمولتي - Firebase initialized:", firebaseApp.name);

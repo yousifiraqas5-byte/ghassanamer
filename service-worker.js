@@ -1,4 +1,4 @@
-const CACHE_NAME = "hamoulati-v2";
+const CACHE_NAME = "hamoulati-v3";
 
 const FILES_TO_CACHE = [
     "./",
@@ -6,7 +6,11 @@ const FILES_TO_CACHE = [
     "./style.css",
     "./script.js",
     "./manifest.json",
-    "./firebase-config.js"
+    "./firebase-config.js",
+    "./icons/icon-180.png",
+    "./icons/icon-192.png",
+    "./icons/icon-512.png",
+    "./icons/favicon-32.png"
 ];
 
 self.addEventListener("install", event => {

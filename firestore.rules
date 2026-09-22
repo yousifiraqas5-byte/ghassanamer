@@ -1,0 +1,57 @@
+rules_version='2'
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Cargo/load requests published by cargo owners
+    match /loads/{loadId} {
+      // Anyone can read loads (drivers browsing available shipments)
+      allow read: if true;
+
+      // Anyone can create a load request, but must include all required fields
+      allow create: if request.resource.data.keys().hasAll([
+        'fromLocation',
+        'toLocation',
+        'cargoType',
+        'cargoWeight',
+        'cargoWeightUnit',
+        'truckType',
+        'cargoPrice',
+        'status',
+        'createdAt'
+      ]) && request.resource.data.createdAt == request.time
+        && request.resource.data.status == 'available';
+
+      // Updates only allowed while load is still available (not yet accepted)
+      allow update: if resource.data.status != 'accepted';
+
+      // No deletes allowed (prevent accidental data loss)
+      allow delete: if false;
+    }
+
+    // Price offers submitted by drivers for a specific load
+    match /offers/{offerId} {
+      // Anyone can read offers (owners/drivers viewing offers on a load)
+      allow read: if true;
+
+      // Anyone can submit an offer, but must include all required fields
+      allow create: if request.resource.data.keys().hasAll([
+        'loadId',
+        'price',
+        'status',
+        'createdAt'
+      ]) && request.resource.data.createdAt == request.time
+        && request.resource.data.status == 'pending';
+
+      // Status updates only (accepting/rejecting an offer)
+      allow update: if resource.data.status == 'pending';
+
+      // No deletes allowed (prevent accidental data loss)
+      allow delete: if false;
+    }
+
+    // Block all other document paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -168,205 +168,15 @@
             </div>
 
 
+            <!-- تُعبّأ هذه القائمة ديناميكياً من Firebase -->
 
-            <!-- Load 1 -->
+            <div id="loadsList">
 
-            <article class="load-card">
+                <p class="loads-loading">
+                    جارِ تحميل طلبات النقل...
+                </p>
 
-                <div class="load-top">
-
-                    <span class="load-status">
-                        متاح
-                    </span>
-
-                    <span class="load-time">
-                        منذ 10 دقائق
-                    </span>
-
-                </div>
-
-
-                <h3>
-                    بغداد → البصرة
-                </h3>
-
-
-                <div class="load-info">
-
-                    <div>
-                        📦
-                        <span>
-                            مواد غذائية
-                        </span>
-                    </div>
-
-                    <div>
-                        ⚖️
-                        <span>
-                            20 طن
-                        </span>
-                    </div>
-
-                    <div>
-                        🚛
-                        <span>
-                            تريلة سطحة
-                        </span>
-                    </div>
-
-                </div>
-
-
-                <div class="load-bottom">
-
-                    <strong>
-                        800,000 د.ع
-                    </strong>
-
-                    <button
-                        onclick="acceptLoad('بغداد → البصرة')">
-
-                        أوافق على الطلب
-
-                    </button>
-
-                </div>
-
-            </article>
-
-
-
-            <!-- Load 2 -->
-
-            <article class="load-card">
-
-                <div class="load-top">
-
-                    <span class="load-status">
-                        متاح
-                    </span>
-
-                    <span class="load-time">
-                        منذ 25 دقيقة
-                    </span>
-
-                </div>
-
-
-                <h3>
-                    أربيل → بغداد
-                </h3>
-
-
-                <div class="load-info">
-
-                    <div>
-                        📦
-                        <span>
-                            بضائع تجارية
-                        </span>
-                    </div>
-
-                    <div>
-                        ⚖️
-                        <span>
-                            15 طن
-                        </span>
-                    </div>
-
-                    <div>
-                        🚛
-                        <span>
-                            تريلة مغلقة
-                        </span>
-                    </div>
-
-                </div>
-
-
-                <div class="load-bottom">
-
-                    <strong>
-                        950,000 د.ع
-                    </strong>
-
-                    <button
-                        onclick="acceptLoad('أربيل → بغداد')">
-
-                        أوافق على الطلب
-
-                    </button>
-
-                </div>
-
-            </article>
-
-
-
-            <!-- Load 3 -->
-
-            <article class="load-card">
-
-                <div class="load-top">
-
-                    <span class="load-status">
-                        متاح
-                    </span>
-
-                    <span class="load-time">
-                        منذ ساعة
-                    </span>
-
-                </div>
-
-
-                <h3>
-                    كركوك → الموصل
-                </h3>
-
-
-                <div class="load-info">
-
-                    <div>
-                        📦
-                        <span>
-                            مواد بناء
-                        </span>
-                    </div>
-
-                    <div>
-                        ⚖️
-                        <span>
-                            25 طن
-                        </span>
-                    </div>
-
-                    <div>
-                        🚛
-                        <span>
-                            قلاب
-                        </span>
-                    </div>
-
-                </div>
-
-
-                <div class="load-bottom">
-
-                    <strong>
-                        600,000 د.ع
-                    </strong>
-
-                    <button
-                        onclick="acceptLoad('كركوك → الموصل')">
-
-                        أوافق على الطلب
-
-                    </button>
-
-                </div>
-
-            </article>
+            </div>
 
 
         </section>
@@ -539,10 +349,33 @@
                 مكان التحميل
             </label>
 
-            <input
-                type="text"
-                id="fromLocation"
-                placeholder="مثلاً: بغداد">
+            <select id="fromLocation">
+
+                <option value="">
+                    اختر المحافظة
+                </option>
+
+                <option>بغداد</option>
+                <option>البصرة</option>
+                <option>نينوى</option>
+                <option>أربيل</option>
+                <option>النجف</option>
+                <option>كربلاء</option>
+                <option>الأنبار</option>
+                <option>ديالى</option>
+                <option>ذي قار</option>
+                <option>بابل</option>
+                <option>كركوك</option>
+                <option>واسط</option>
+                <option>ميسان</option>
+                <option>المثنى</option>
+                <option>القادسية</option>
+                <option>صلاح الدين</option>
+                <option>دهوك</option>
+                <option>السليمانية</option>
+                <option>حلبجة</option>
+
+            </select>
 
 
 
@@ -550,10 +383,33 @@
                 مكان التفريغ
             </label>
 
-            <input
-                type="text"
-                id="toLocation"
-                placeholder="مثلاً: البصرة">
+            <select id="toLocation">
+
+                <option value="">
+                    اختر المحافظة
+                </option>
+
+                <option>بغداد</option>
+                <option>البصرة</option>
+                <option>نينوى</option>
+                <option>أربيل</option>
+                <option>النجف</option>
+                <option>كربلاء</option>
+                <option>الأنبار</option>
+                <option>ديالى</option>
+                <option>ذي قار</option>
+                <option>بابل</option>
+                <option>كركوك</option>
+                <option>واسط</option>
+                <option>ميسان</option>
+                <option>المثنى</option>
+                <option>القادسية</option>
+                <option>صلاح الدين</option>
+                <option>دهوك</option>
+                <option>السليمانية</option>
+                <option>حلبجة</option>
+
+            </select>
 
 
 
@@ -572,10 +428,27 @@
                 الوزن
             </label>
 
-            <input
-                type="text"
-                id="cargoWeight"
-                placeholder="مثلاً: 20 طن">
+            <div class="weight-row">
+
+                <input
+                    type="text"
+                    id="cargoWeight"
+                    inputmode="numeric"
+                    placeholder="مثلاً: 20">
+
+                <select id="cargoWeightUnit">
+
+                    <option value="kg">
+                        كيلوغرام (كغم)
+                    </option>
+
+                    <option value="ton" selected>
+                        طن
+                    </option>
+
+                </select>
+
+            </div>
 
 
 
@@ -638,6 +511,70 @@
     </div>
 
 
+
+    <!-- =========================
+         Offer Modal
+    ========================== -->
+
+    <div id="offerModal" class="modal">
+
+
+        <div class="modal-content">
+
+
+            <button
+                class="close-btn"
+                onclick="closeOfferModal()">
+
+                ×
+
+            </button>
+
+
+            <h2>
+                تقديم عرض سعر
+            </h2>
+
+
+            <p>
+                أدخل السعر الذي تقترحه لنقل هذه الحمولة
+            </p>
+
+
+
+            <label>
+                السعر المقترح (د.ع)
+            </label>
+
+            <input
+                type="number"
+                id="offerPrice"
+                placeholder="مثلاً: 750000">
+
+
+
+            <button
+                class="submit-btn"
+                onclick="submitOffer()">
+
+                إرسال العرض
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =========================
+         Firebase SDK
+    ========================== -->
+
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
 
     <!-- =========================
          JavaScript

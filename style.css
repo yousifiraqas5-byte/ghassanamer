@@ -314,6 +314,12 @@ main {
     font-weight: 700;
 }
 
+.load-status.accepted {
+    background: #eef0ff;
+
+    color: #3949ab;
+}
+
 .load-time {
     color: #8e8e93;
 
@@ -360,6 +366,8 @@ main {
 .load-bottom {
     display: flex;
 
+    flex-wrap: wrap;
+
     align-items: center;
 
     gap: 10px;
@@ -372,7 +380,7 @@ main {
 }
 
 .load-bottom strong {
-    flex: 1;
+    flex: 1 1 100%;
 
     font-size: 16px;
 
@@ -380,6 +388,8 @@ main {
 }
 
 .load-bottom button {
+    flex: 1;
+
     border: none;
 
     background: #111;
@@ -403,6 +413,174 @@ main {
 
 .load-bottom button:active {
     transform: scale(0.96);
+}
+
+.load-bottom button:disabled {
+    background: #ccc;
+
+    cursor: not-allowed;
+}
+
+.load-bottom .offer-btn {
+    background: white;
+
+    color: #111;
+
+    border: 1.5px solid #111;
+}
+
+
+/* =========================
+   OFFERS
+========================= */
+
+.offers-toggle {
+    width: 100%;
+
+    margin-top: 10px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #555;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    text-align: center;
+
+    cursor: pointer;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.offers-list {
+    display: none;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+.offers-list.open {
+    display: flex;
+}
+
+.offers-loading,
+.offers-empty {
+    color: #8e8e93;
+
+    font-size: 12px;
+
+    text-align: center;
+
+    padding: 8px 0;
+}
+
+.offer-item {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    background: #f5f5f7;
+
+    border-radius: 12px;
+
+    padding: 10px 12px;
+}
+
+.offer-item-info {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    font-size: 13px;
+}
+
+.offer-item-info small {
+    color: #8e8e93;
+
+    font-size: 11px;
+}
+
+.offer-status {
+    padding: 3px 8px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+.offer-status-pending {
+    background: #fff4e0;
+
+    color: #b8730a;
+}
+
+.offer-status-accepted {
+    background: #e8f7ed;
+
+    color: #16833d;
+}
+
+.offer-status-rejected {
+    background: #fdeaea;
+
+    color: #c0392b;
+}
+
+.offer-accept-btn {
+    border: none;
+
+    background: #111;
+
+    color: white;
+
+    border-radius: 10px;
+
+    padding: 7px 10px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    white-space: nowrap;
+
+    -webkit-tap-highlight-color: transparent;
+}
+
+.offer-accept-btn:active {
+    transform: scale(0.96);
+}
+
+
+/* =========================
+   LOADS LIST STATES
+========================= */
+
+.loads-loading,
+.loads-empty {
+    color: #8e8e93;
+
+    font-size: 13px;
+
+    text-align: center;
+
+    padding: 20px 0;
 }
 
 
@@ -667,6 +845,20 @@ main {
     border-color: #111;
 }
 
+.weight-row {
+    display: flex;
+
+    gap: 8px;
+}
+
+.weight-row input {
+    flex: 2;
+}
+
+.weight-row select {
+    flex: 1;
+}
+
 .submit-btn {
     width: 100%;
 
@@ -735,5 +927,9 @@ main {
     .load-bottom button {
         padding: 10px 10px;
         font-size: 11px;
+    }
+
+    .weight-row {
+        flex-direction: column;
     }
 }

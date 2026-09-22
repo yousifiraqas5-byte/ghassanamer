@@ -1,11 +1,12 @@
-const CACHE_NAME = "hamoulati-v1";
+const CACHE_NAME = "hamoulati-v2";
 
 const FILES_TO_CACHE = [
     "./",
     "./index.html",
     "./style.css",
     "./script.js",
-    "./manifest.json"
+    "./manifest.json",
+    "./firebase-config.js"
 ];
 
 self.addEventListener("install", event => {

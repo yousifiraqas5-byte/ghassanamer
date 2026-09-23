@@ -312,7 +312,17 @@ function renderLoad(id, data) {
             '<span class="load-time">' + timeLabel + '</span>' +
         '</div>' +
 
-        '<h3>' + data.fromLocation + ' → ' + data.toLocation + '</h3>' +
+        '<h3 class="load-route">' +
+            '<span class="route-segment">' +
+                '<span class="route-label">من</span> 📍 ' +
+                '<span class="route-place">' + data.fromLocation + '</span>' +
+            '</span>' +
+            '<span class="route-arrow" aria-hidden="true">→</span>' +
+            '<span class="route-segment">' +
+                '<span class="route-label">إلى</span> 📍 ' +
+                '<span class="route-place">' + data.toLocation + '</span>' +
+            '</span>' +
+        '</h3>' +
 
         '<div class="load-info">' +
             '<div>📦 <span>' + data.cargoType + '</span></div>' +

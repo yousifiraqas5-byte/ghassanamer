@@ -326,12 +326,46 @@ main {
     font-size: 11px;
 }
 
-.load-card h3 {
+.load-card .load-route {
     font-size: 19px;
 
     font-weight: 800;
 
     margin-bottom: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+}
+
+.load-route .route-segment {
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 4px;
+}
+
+.load-route .route-label {
+    color: #6e6e73;
+
+    font-weight: 700;
+}
+
+.load-route .route-arrow {
+    color: #111;
+
+    font-weight: 800;
+
+    flex-shrink: 0;
+}
+
+.load-route .route-place {
+    font-weight: 800;
 }
 
 .load-info {

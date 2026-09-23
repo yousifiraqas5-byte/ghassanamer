@@ -327,22 +327,22 @@ main {
 }
 
 .load-card .load-route {
-    font-size: 19px;
-
     font-weight: 800;
 
     margin-bottom: 13px;
 
     display: flex;
 
+    justify-content: space-between;
+
     align-items: center;
 
-    gap: 12px;
+    gap: 16px;
 
     flex-wrap: wrap;
 }
 
-.load-route .route-segment {
+.load-route .route-half {
     display: inline-flex;
 
     align-items: center;
@@ -351,20 +351,16 @@ main {
 }
 
 .load-route .route-label {
+    font-size: 13px;
+
+    font-weight: 600;
+
     color: #6e6e73;
-
-    font-weight: 700;
-}
-
-.load-route .route-arrow {
-    color: #111;
-
-    font-weight: 800;
-
-    flex-shrink: 0;
 }
 
 .load-route .route-place {
+    font-size: 19px;
+
     font-weight: 800;
 }
 

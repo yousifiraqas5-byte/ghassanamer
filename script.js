@@ -313,13 +313,12 @@ function renderLoad(id, data) {
         '</div>' +
 
         '<h3 class="load-route">' +
-            '<span class="route-segment">' +
-                '<span class="route-label">من</span> 📍 ' +
+            '<span class="route-half">' +
+                '<span class="route-label">من</span> ' +
                 '<span class="route-place">' + data.fromLocation + '</span>' +
             '</span>' +
-            '<span class="route-arrow" aria-hidden="true">→</span>' +
-            '<span class="route-segment">' +
-                '<span class="route-label">إلى</span> 📍 ' +
+            '<span class="route-half">' +
+                '<span class="route-label">إلى</span> ' +
                 '<span class="route-place">' + data.toLocation + '</span>' +
             '</span>' +
         '</h3>' +

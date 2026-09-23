@@ -617,7 +617,7 @@
 
 
             <p>
-                سجّل دخولك برقم هاتفك العراقي
+                سجّل دخولك بحساب Google
             </p>
 
 
@@ -641,7 +641,7 @@
 
 
                 <p class="account-subtitle">
-                    سجّل دخولك برقم هاتفك حتى يصير حسابك جاهز
+                    سجّل دخولك بحساب Google حتى يصير حسابك جاهز
                     لمتابعة حمولاتك وعروضك وربطها باسمك.
                 </p>
 
@@ -649,7 +649,7 @@
                 <div class="account-benefits">
 
                     <div>
-                        👤 <span>اسمك ورقمك محفوظان بحسابك</span>
+                        👤 <span>اسمك وصورتك من حساب Google</span>
                     </div>
 
                     <div>
@@ -664,166 +664,11 @@
 
 
                 <button
-                    class="submit-btn"
-                    onclick="showAccountView('phone')">
+                    class="submit-btn google-btn"
+                    id="googleSignInBtn"
+                    onclick="signInWithGoogle()">
 
-                    تسجيل الدخول برقم الهاتف
-
-                </button>
-
-
-            </div>
-
-
-
-            <!-- =========================
-                 العرض: إدخال رقم الهاتف
-            ========================== -->
-
-            <div
-                class="account-view"
-                id="accountPhoneView">
-
-
-                <p class="account-subtitle">
-                    أدخل رقم هاتفك وسنرسل لك رمز تحقق (OTP) برسالة SMS.
-                </p>
-
-
-                <label for="accountPhone">
-                    رقم الهاتف
-                </label>
-
-
-                <div class="phone-row">
-
-                    <span class="phone-flag">
-                        🇮🇶 +964
-                    </span>
-
-                    <input
-                        type="tel"
-                        id="accountPhone"
-                        inputmode="numeric"
-                        autocomplete="tel"
-                        placeholder="07701234567">
-
-                </div>
-
-
-                <p class="account-hint">
-                    اكتب الرقم بأي صيغة: 07701234567 أو 7701234567
-                    أو +9647701234567 — ولا تكرّر مفتاح الدولة 964.
-                </p>
-
-
-                <p
-                    class="account-preview"
-                    id="accountPhonePreview"
-                    hidden>
-                </p>
-
-
-                <!-- حاوية reCAPTCHA المطلوبة لتسجيل الدخول بالهاتف على الويب -->
-
-                <div
-                    class="recaptcha-box"
-                    id="recaptcha-container">
-                </div>
-
-
-                <p
-                    class="account-error"
-                    id="accountPhoneError"
-                    hidden>
-                </p>
-
-
-                <button
-                    class="submit-btn"
-                    id="sendOtpBtn"
-                    onclick="sendOtp()">
-
-                    إرسال رمز التحقق
-
-                </button>
-
-
-                <button
-                    class="ghost-btn"
-                    onclick="showAccountView('loggedOut')">
-
-                    رجوع
-
-                </button>
-
-
-            </div>
-
-
-
-            <!-- =========================
-                 العرض: إدخال رمز التحقق
-            ========================== -->
-
-            <div
-                class="account-view"
-                id="accountOtpView">
-
-
-                <p class="account-subtitle">
-                    أرسلنا رمز التحقق إلى
-                    <strong id="accountOtpPhone"></strong>
-                </p>
-
-
-                <label for="accountOtp">
-                    رمز التحقق (6 أرقام)
-                </label>
-
-
-                <input
-                    type="text"
-                    id="accountOtp"
-                    class="otp-input"
-                    inputmode="numeric"
-                    maxlength="6"
-                    autocomplete="one-time-code"
-                    placeholder="000000">
-
-
-                <p
-                    class="account-error"
-                    id="accountOtpError"
-                    hidden>
-                </p>
-
-
-                <button
-                    class="submit-btn"
-                    id="verifyOtpBtn"
-                    onclick="verifyOtp()">
-
-                    تحقق ودخول
-
-                </button>
-
-
-                <button
-                    class="ghost-btn"
-                    id="resendOtpBtn"
-                    onclick="resendOtp()">
-
-                    إعادة إرسال الرمز
-
-                </button>
-
-
-                <button
-                    class="ghost-btn"
-                    onclick="showAccountView('phone')">
-
-                    تغيير رقم الهاتف
+                    تسجيل الدخول باستخدام Google
 
                 </button>
 
@@ -842,7 +687,7 @@
 
 
                 <p class="account-subtitle">
-                    تم التحقق من رقم هاتفك ✅ — باقي بس اسمك.
+                    سجّلت دخولك بنجاح ✅ — باقي بس اسمك.
                 </p>
 
 
@@ -861,7 +706,7 @@
 
                 <p
                     class="account-hint"
-                    id="accountNamePhoneHint">
+                    id="accountNameHint">
                 </p>
 
 
@@ -916,12 +761,12 @@
                 <div class="account-info-row">
 
                     <span class="account-info-icon">
-                        📱
+                        ✉️
                     </span>
 
                     <span
                         class="account-info-value"
-                        id="accountPhoneDisplay"
+                        id="accountEmailDisplay"
                         dir="ltr">
 
                         —
@@ -996,6 +841,27 @@
     <script>
 
         if ("serviceWorker" in navigator) {
+
+            // إذا كانت الصفحة أصلاً محكومة بنسخة Service Worker سابقة،
+            // فهذا يعني أن أي "تغيير سيطرة" لاحق هو تحديث حقيقي وصل من
+            // النشر الجديد — عندها نعيد تحميل الصفحة مرة واحدة فقط حتى
+            // تُستخدم النسخة الجديدة بدل البقاء عالقين على القديمة
+            // (بدون أي حلقة إعادة تحميل، لأن refreshing يُضبط مرة واحدة).
+            var hadController = !!navigator.serviceWorker.controller;
+            var refreshing = false;
+
+            navigator.serviceWorker.addEventListener(
+                "controllerchange",
+                function () {
+
+                    if (!hadController || refreshing) {
+                        return;
+                    }
+
+                    refreshing = true;
+                    window.location.reload();
+                }
+            );
 
             window.addEventListener(
                 "load",

@@ -1018,8 +1018,8 @@ document.addEventListener(
 
 
 // ========================================
-// نظام الحساب وتسجيل الدخول برقم الهاتف
-// (Firebase Authentication - Phone / OTP)
+// نظام الحساب وتسجيل الدخول بحساب Google
+// (Firebase Authentication - Google Sign-In)
 // ========================================
 
 // المستخدم الحالي من Firebase Auth
@@ -1028,179 +1028,34 @@ let currentUser = null;
 // ملف المستخدم من Firestore (مجموعة users)
 let currentUserProfile = null;
 
-// نتيجة إرسال رمز التحقق (مطلوبة لتأكيد الرمز)
-let confirmationResult = null;
-
-// أداة reCAPTCHA المطلوبة لتسجيل الدخول بالهاتف على الويب
-let recaptchaVerifier = null;
-
-// رقم الهاتف (بصيغة E.164) الذي أُرسل إليه الرمز
-let pendingPhoneNumber = "";
-
-// مؤقّت السماح بإعادة إرسال الرمز
-let otpResendTimer = null;
-
-// عدد الثواني قبل السماح بإعادة إرسال الرمز
-const OTP_RESEND_DELAY = 60;
-
-// رمز العراق الدولي
-const IRAQ_COUNTRY_CODE = "964";
-
 // معرّفات عروض نافذة الحساب داخل الصفحة
 const ACCOUNT_VIEW_IDS = {
     loggedOut: "accountLoggedOutView",
-    phone: "accountPhoneView",
-    otp: "accountOtpView",
     name: "accountNameView",
     profile: "accountProfileView"
 };
 
-// أرقام عربية (٠-٩) وفارسية (۰-۹) لتحويلها إلى أرقام لاتينية
-const ARABIC_INDIC_DIGITS = "٠١٢٣٤٥٦٧٨٩";
-const EXTENDED_ARABIC_DIGITS = "۰۱۲۳۴۵۶۷۸۹";
-
-// رسائل أخطاء تسجيل الدخول بالعربي
+// رسائل أخطاء تسجيل الدخول بالعربي (Google Sign-In)
 const AUTH_ERROR_MESSAGES = {
-    "auth/invalid-phone-number":
-        "رقم الهاتف غير صحيح. اكتب رقم موبايل عراقي مثل 07701234567 أو +9647701234567.",
-    "auth/missing-phone-number":
-        "يرجى إدخال رقم الهاتف أولاً.",
-    "auth/too-many-requests":
-        "صارت محاولات كثيرة على هذا الرقم. انتظر قليلاً ثم حاول مرة أخرى.",
-    "auth/quota-exceeded":
-        "تم تجاوز الحد المسموح لإرسال رسائل التحقق. حاول لاحقاً.",
-    "auth/invalid-verification-code":
-        "رمز التحقق خاطئ. تأكد من الرمز واكتبه مرة أخرى.",
-    "auth/code-expired":
-        "انتهت صلاحية رمز التحقق. اضغط على «إعادة إرسال الرمز».",
-    "auth/invalid-verification-id":
-        "انتهت صلاحية جلسة التحقق. اضغط على «إعادة إرسال الرمز».",
-    "auth/session-expired":
-        "انتهت صلاحية جلسة التحقق. اضغط على «إعادة إرسال الرمز».",
-    "auth/captcha-check-failed":
-        "فشل التحقق من reCAPTCHA. أعد المحاولة من جديد.",
-    "auth/missing-app-credential":
-        "تعذّر تجهيز التحقق (reCAPTCHA). حدّث الصفحة وحاول مرة أخرى.",
-    "auth/invalid-app-credential":
-        "تعذّر التحقق من reCAPTCHA. حدّث الصفحة وحاول مرة أخرى.",
+    "auth/popup-blocked":
+        "المتصفح منع نافذة تسجيل الدخول. اسمح بالنوافذ المنبثقة وحاول مرة أخرى.",
+    "auth/popup-closed-by-user":
+        "تم إغلاق نافذة تسجيل الدخول قبل إكمال العملية.",
+    "auth/cancelled-popup-request":
+        "تم إلغاء الطلب لوجود محاولة تسجيل دخول أخرى قيد التنفيذ.",
+    "auth/account-exists-with-different-credential":
+        "هذا البريد الإلكتروني مرتبط مسبقاً بطريقة تسجيل دخول أخرى.",
     "auth/unauthorized-domain":
         "هذا النطاق غير مصرّح به في Firebase Authentication. أضف نطاق الموقع من إعدادات Firebase.",
     "auth/operation-not-allowed":
-        "تسجيل الدخول بالهاتف غير مفعّل في Firebase. فعّل Phone من صفحة Sign-in method.",
-    "auth/billing-not-enabled":
-        "خدمة رسائل التحقق غير مفعّلة (المشروع يحتاج تفعيل الفاتورة).",
+        "تسجيل الدخول بحساب Google غير مفعّل في Firebase. فعّله من صفحة Sign-in method.",
     "auth/network-request-failed":
         "تعذّر الاتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى.",
     "auth/user-disabled":
         "تم إيقاف هذا الحساب. تواصل مع الدعم.",
     "auth/internal-error":
-        "حدث خطأ داخلي في خدمة تسجيل الدخول. حاول مرة أخرى.",
-    "auth/argument-error":
-        "تعذّر إكمال العملية. تأكد من الرقم وحاول مرة أخرى."
+        "حدث خطأ داخلي في خدمة تسجيل الدخول. حاول مرة أخرى."
 };
-
-// ========================================
-// تحويل الأرقام العربية/الفارسية إلى أرقام لاتينية
-// ========================================
-
-function toLatinDigits(value) {
-
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
-
-        .replace(/[٠-٩]/g, function (digit) {
-            return String(ARABIC_INDIC_DIGITS.indexOf(digit));
-        })
-
-        .replace(/[۰-۹]/g, function (digit) {
-            return String(EXTENDED_ARABIC_DIGITS.indexOf(digit));
-        });
-}
-
-
-// ========================================
-// تحويل رقم الهاتف العراقي إلى صيغة E.164
-// يقبل: 07701234567 / 7701234567 / 9647701234567
-//        +9647701234567 / 009647701234567 / 96407701234567
-// ويرجّع "+9647701234567" بدون تكرار مفتاح الدولة
-// ويرجّع "" إذا الرقم غير صحيح
-// ========================================
-
-function normalizeIraqiPhone(rawValue) {
-
-    if (rawValue === null || rawValue === undefined) {
-        return "";
-    }
-
-    // نُبقي الأرقام فقط (نحذف المسافات والشرطات وعلامة +)
-    let value = toLatinDigits(rawValue).replace(/[^0-9]/g, "");
-
-    if (!value) {
-        return "";
-    }
-
-    // صيغة الاتصال الدولية: 00964... تصير 964...
-    if (value.indexOf("00" + IRAQ_COUNTRY_CODE) === 0) {
-        value = value.slice(2);
-    }
-
-    // إذا كتب المستخدم مفتاح الدولة مع صفر زائد:
-    // 96407701234567 تصير 9647701234567
-    if (value.indexOf(IRAQ_COUNTRY_CODE + "0") === 0) {
-
-        value =
-            IRAQ_COUNTRY_CODE +
-            value.slice(IRAQ_COUNTRY_CODE.length + 1).replace(/^0+/, "");
-    }
-
-    // لا نكرّر مفتاح الدولة: نضيفه فقط إذا الرقم ما يبدأ بيه
-    if (value.indexOf(IRAQ_COUNTRY_CODE) !== 0) {
-        value = IRAQ_COUNTRY_CODE + value.replace(/^0+/, "");
-    }
-
-    // رقم الموبايل العراقي = 964 + 7XXXXXXXXX
-    if (!/^9647[0-9]{9}$/.test(value)) {
-        return "";
-    }
-
-    return "+" + value;
-}
-
-
-// ========================================
-// التحقق من رقم الهاتف العراقي (صيغة E.164)
-// ========================================
-
-function isValidIraqiPhone(e164Phone) {
-
-    return typeof e164Phone === "string"
-        && /^\+9647[0-9]{9}$/.test(e164Phone);
-}
-
-
-// ========================================
-// عرض رقم الهاتف بشكل مقروء: +964 770 123 4567
-// ========================================
-
-function formatPhoneForDisplay(phone) {
-
-    const digits = toLatinDigits(phone).replace(/[^0-9]/g, "");
-
-    if (digits.length === 13 && digits.indexOf(IRAQ_COUNTRY_CODE) === 0) {
-
-        const local = digits.slice(IRAQ_COUNTRY_CODE.length);
-
-        return "+" + IRAQ_COUNTRY_CODE + " " +
-            local.slice(0, 3) + " " +
-            local.slice(3, 6) + " " +
-            local.slice(6);
-    }
-
-    return digits ? "+" + digits : "";
-}
 
 
 // ========================================
@@ -1352,367 +1207,31 @@ function isAccountModalOpen() {
 }
 
 // ========================================
-// تهيئة reCAPTCHA (مطلوبة لتسجيل الدخول بالهاتف على الويب)
+// تسجيل الدخول بحساب Google عبر Firebase Authentication
 // ========================================
 
-function setupRecaptchaVerifier() {
-
-    resetRecaptchaVerifier();
-
-    const container = document.getElementById("recaptcha-container");
-
-    if (!container || !window.auth) {
-        return;
-    }
-
-    recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
-        container,
-        {
-            size: "invisible",
-            "expired-callback": function () {
-
-                // انتهت صلاحية reCAPTCHA: ننشئ واحدة جديدة بالمحاولة القادمة
-                resetRecaptchaVerifier();
-            }
-        },
-        window.firebaseApp
-    );
-}
-
-
-// ========================================
-// تنظيف reCAPTCHA بعد كل استخدام
-// ========================================
-
-function resetRecaptchaVerifier() {
-
-    if (!recaptchaVerifier) {
-        return;
-    }
-
-    try {
-        recaptchaVerifier.clear();
-    } catch (error) {
-        console.warn("حمولتي - تعذّر تنظيف reCAPTCHA:", error);
-    }
-
-    recaptchaVerifier = null;
-}
-
-
-// ========================================
-// مؤقّت إعادة إرسال الرمز
-// ========================================
-
-function startOtpResendTimer() {
-
-    const resendBtn = document.getElementById("resendOtpBtn");
-
-    if (!resendBtn) {
-        return;
-    }
-
-    stopOtpResendTimer();
-
-    let remaining = OTP_RESEND_DELAY;
-
-    resendBtn.disabled = true;
-    resendBtn.textContent =
-        "إعادة إرسال الرمز بعد " + remaining + " ثانية";
-
-    otpResendTimer = window.setInterval(function () {
-
-        remaining = remaining - 1;
-
-        if (remaining <= 0) {
-
-            stopOtpResendTimer();
-
-            resendBtn.disabled = false;
-            resendBtn.textContent = "إعادة إرسال الرمز";
-
-            return;
-        }
-
-        resendBtn.textContent =
-            "إعادة إرسال الرمز بعد " + remaining + " ثانية";
-
-    }, 1000);
-}
-
-function stopOtpResendTimer() {
-
-    if (!otpResendTimer) {
-        return;
-    }
-
-    window.clearInterval(otpResendTimer);
-    otpResendTimer = null;
-}
-
-
-// ========================================
-// معاينة الرقم بعد تحويله (بدون تكرار 964)
-// ========================================
-
-function updatePhonePreview(value) {
-
-    const preview = document.getElementById("accountPhonePreview");
-
-    if (!preview) {
-        return;
-    }
-
-    const typed = toLatinDigits(value).replace(/[^0-9+]/g, "");
-
-    if (!typed) {
-
-        preview.textContent = "";
-        preview.hidden = true;
-        preview.className = "account-preview";
-
-        return;
-    }
-
-    const e164Phone = normalizeIraqiPhone(value);
-
-    preview.hidden = false;
-
-    if (e164Phone) {
-
-        preview.className = "account-preview valid";
-        preview.textContent =
-            "سيتم إرسال الرمز إلى: " + formatPhoneForDisplay(e164Phone);
-
-        return;
-    }
-
-    preview.className = "account-preview invalid";
-    preview.textContent = "الرقم غير مكتمل أو غير صحيح";
-}
-
-
-// ========================================
-// ربط حقول نافذة الحساب
-// ========================================
-
-function bindAccountInputs() {
-
-    const phoneInput = document.getElementById("accountPhone");
-
-    if (phoneInput) {
-
-        phoneInput.addEventListener("input", function () {
-
-            let value = toLatinDigits(phoneInput.value);
-
-            // نسمح بالأرقام والمسافة وعلامة + في البداية
-            value = value.replace(/[^0-9+\s]/g, "");
-
-            if (value.indexOf("+") > 0) {
-                value = value.replace(/\+/g, "");
-            }
-
-            phoneInput.value = value;
-
-            updatePhonePreview(value);
-        });
-    }
-
-    const otpInput = document.getElementById("accountOtp");
-
-    if (otpInput) {
-
-        otpInput.addEventListener("input", function () {
-
-            otpInput.value = toLatinDigits(otpInput.value)
-                .replace(/[^0-9]/g, "")
-                .slice(0, 6);
-        });
-    }
-}
-
-// ========================================
-// إرسال رمز التحقق (OTP) إلى رقم الهاتف
-// ========================================
-
-function sendOtp() {
+function signInWithGoogle() {
 
     if (!window.auth) {
 
-        showAccountError(
-            "accountPhoneError",
+        showAccountGeneralError(
             "خدمة تسجيل الدخول غير متوفّرة حالياً. حدّث الصفحة وحاول مرة أخرى."
         );
 
         return;
     }
 
-    const phoneInput = document.getElementById("accountPhone");
+    hideAccountGeneralError();
 
-    const rawPhone = phoneInput ? phoneInput.value : "";
+    const googleBtn = document.getElementById("googleSignInBtn");
 
-    const e164Phone = normalizeIraqiPhone(rawPhone);
+    setButtonBusy(googleBtn, true, "جارِ تسجيل الدخول...");
 
-    hideAccountError("accountPhoneError");
+    const provider = new firebase.auth.GoogleAuthProvider();
 
-    if (!isValidIraqiPhone(e164Phone)) {
-
-        showAccountError(
-            "accountPhoneError",
-            "رقم الهاتف غير صحيح. اكتب رقم موبايل عراقي مثل 07701234567."
-        );
-
-        return;
-    }
-
-    const sendBtn = document.getElementById("sendOtpBtn");
-
-    setButtonBusy(sendBtn, true, "جارِ إرسال الرمز...");
-
-    // إنشاء أداة reCAPTCHA جديدة قبل كل محاولة إرسال
-    setupRecaptchaVerifier();
-
-    if (!recaptchaVerifier) {
-
-        setButtonBusy(sendBtn, false);
-
-        showAccountError(
-            "accountPhoneError",
-            "تعذّر تجهيز التحقق (reCAPTCHA). حدّث الصفحة وحاول مرة أخرى."
-        );
-
-        return;
-    }
-
-    auth.signInWithPhoneNumber(e164Phone, recaptchaVerifier)
+    auth.signInWithPopup(provider)
 
         .then(function (result) {
-
-            confirmationResult = result;
-            pendingPhoneNumber = e164Phone;
-
-            const phoneLabel = document.getElementById("accountOtpPhone");
-
-            if (phoneLabel) {
-                phoneLabel.textContent = formatPhoneForDisplay(e164Phone);
-            }
-
-            const otpInput = document.getElementById("accountOtp");
-
-            if (otpInput) {
-                otpInput.value = "";
-            }
-
-            hideAccountError("accountOtpError");
-
-            showAccountView("otp");
-            startOtpResendTimer();
-
-            if (otpInput) {
-                otpInput.focus();
-            }
-
-        })
-
-        .catch(function (error) {
-
-            console.error("Error sending OTP:", error);
-
-            // بعد أي فشل ننشئ reCAPTCHA جديدة للمحاولة القادمة
-            resetRecaptchaVerifier();
-
-            showAccountError(
-                "accountPhoneError",
-                getAuthErrorMessage(
-                    error,
-                    "فشل إرسال الرمز. حاول مرة أخرى."
-                )
-            );
-
-        })
-
-        .finally(function () {
-
-            setButtonBusy(sendBtn, false);
-
-        });
-}
-
-
-// ========================================
-// إعادة إرسال رمز التحقق لنفس الرقم
-// ========================================
-
-function resendOtp() {
-
-    const resendBtn = document.getElementById("resendOtpBtn");
-
-    if (resendBtn && resendBtn.disabled) {
-        return;
-    }
-
-    if (!pendingPhoneNumber) {
-
-        showAccountView("phone");
-
-        return;
-    }
-
-    const phoneInput = document.getElementById("accountPhone");
-
-    if (phoneInput) {
-        phoneInput.value = pendingPhoneNumber;
-    }
-
-    sendOtp();
-}
-
-// ========================================
-// تأكيد رمز التحقق وتسجيل الدخول
-// ========================================
-
-function verifyOtp() {
-
-    if (!window.auth || !confirmationResult) {
-
-        showAccountError(
-            "accountOtpError",
-            "انتهت صلاحية جلسة التحقق. اضغط على «إعادة إرسال الرمز»."
-        );
-
-        return;
-    }
-
-    const otpInput = document.getElementById("accountOtp");
-
-    const code = toLatinDigits(otpInput ? otpInput.value : "")
-        .replace(/[^0-9]/g, "");
-
-    hideAccountError("accountOtpError");
-
-    if (code.length !== 6) {
-
-        showAccountError(
-            "accountOtpError",
-            "أدخل رمز التحقق المكوّن من 6 أرقام."
-        );
-
-        return;
-    }
-
-    const verifyBtn = document.getElementById("verifyOtpBtn");
-
-    setButtonBusy(verifyBtn, true, "جارِ التحقق...");
-
-    confirmationResult.confirm(code)
-
-        .then(function (result) {
-
-            confirmationResult = null;
-
-            stopOtpResendTimer();
-            resetRecaptchaVerifier();
 
             return handleSignedInUser(result.user);
 
@@ -1720,13 +1239,17 @@ function verifyOtp() {
 
         .catch(function (error) {
 
-            console.error("Error verifying OTP:", error);
+            // المستخدم أغلق نافذة تسجيل الدخول بنفسه: لا داعي لإظهار خطأ
+            if (error && error.code === "auth/popup-closed-by-user") {
+                return;
+            }
 
-            showAccountError(
-                "accountOtpError",
+            console.error("Error signing in with Google:", error);
+
+            showAccountGeneralError(
                 getAuthErrorMessage(
                     error,
-                    "فشل تسجيل الدخول. حاول مرة أخرى."
+                    "فشل تسجيل الدخول بحساب Google. حاول مرة أخرى."
                 )
             );
 
@@ -1734,10 +1257,11 @@ function verifyOtp() {
 
         .finally(function () {
 
-            setButtonBusy(verifyBtn, false);
+            setButtonBusy(googleBtn, false);
 
         });
 }
+
 
 
 // ========================================
@@ -1765,16 +1289,25 @@ function handleSignedInUser(user) {
         return Promise.resolve();
     }
 
-    return db.collection("users").doc(user.uid).get()
+    const userRef = db.collection("users").doc(user.uid);
+
+    return userRef.get()
 
         .then(function (snapshot) {
 
-            const profile = snapshot.exists ? snapshot.data() : null;
+            const existingProfile = snapshot.exists ? snapshot.data() : null;
 
-            currentUserProfile = profile;
+            // الاسم يأتي من حساب Google، وإلا من الملف المحفوظ سابقاً
+            const name =
+                (user.displayName && user.displayName.trim())
+                    || (existingProfile && existingProfile.name)
+                    || "";
 
-            // مستخدم جديد (أو ملف بلا اسم) → نطلب الاسم
-            if (!profile || !profile.name) {
+            // حالة نادرة: حساب Google بلا اسم ظاهر ولا اسم محفوظ سابقاً
+            // → نطلب الاسم يدوياً (بدون اختراع رقم هاتف أو أي بيانات أخرى)
+            if (!name) {
+
+                currentUserProfile = existingProfile;
 
                 prepareNameView(user);
                 showAccountView("name");
@@ -1782,17 +1315,30 @@ function handleSignedInUser(user) {
                 return;
             }
 
-            // مستخدم موجود → نحدّث رقم الهاتف ووقت آخر تحديث فقط
-            return db.collection("users").doc(user.uid).set({
-
-                phone: user.phoneNumber || "",
+            const payload = {
+                name: name,
+                email: user.email || "",
+                photoURL: user.photoURL || "",
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
 
-            }, { merge: true })
+            // createdAt يُكتب مرة واحدة فقط عند إنشاء الحساب
+            if (!snapshot.exists) {
+
+                payload.createdAt =
+                    firebase.firestore.FieldValue.serverTimestamp();
+            }
+
+            return userRef.set(payload, { merge: true })
 
                 .then(function () {
 
-                    renderProfileView(user, profile);
+                    currentUserProfile = Object.assign(
+                        {}, existingProfile, payload
+                    );
+
+                    updateAccountNavState(user);
+                    renderProfileView(user, currentUserProfile);
 
                 })
 
@@ -1801,7 +1347,8 @@ function handleSignedInUser(user) {
                     // لا نمنع المستخدم من رؤية حسابه إذا فشل التحديث
                     console.error("Error updating user profile:", error);
 
-                    renderProfileView(user, profile);
+                    currentUserProfile = existingProfile;
+                    renderProfileView(user, existingProfile);
 
                 });
 
@@ -1846,12 +1393,13 @@ function loadUserProfile(user) {
 
 function prepareNameView(user) {
 
-    const hint = document.getElementById("accountNamePhoneHint");
+    const hint = document.getElementById("accountNameHint");
 
     if (hint) {
 
-        hint.textContent = "سيتم ربط الحساب بالرقم: " +
-            formatPhoneForDisplay(user ? user.phoneNumber : "");
+        hint.textContent = (user && user.email)
+            ? ("سيتم ربط الحساب بالبريد: " + user.email)
+            : "";
     }
 
     const nameInput = document.getElementById("accountNameInput");
@@ -1866,7 +1414,8 @@ function prepareNameView(user) {
 
 // ========================================
 // حفظ الاسم وإنشاء/تحديث ملف المستخدم في Firestore
-// البيانات: { name, phone, createdAt, updatedAt }
+// (حالة نادرة: حساب Google بلا اسم ظاهر)
+// البيانات: { name, email, photoURL, createdAt, updatedAt }
 // ========================================
 
 function saveAccountName() {
@@ -1916,8 +1465,9 @@ function saveAccountName() {
 
     const user = window.auth.currentUser;
 
-    // رقم الهاتف يُؤخذ من Firebase Auth ولا يُكتب يدوياً
-    const phone = user.phoneNumber || "";
+    // البريد وصورة الحساب يُؤخذان من Firebase Auth (حساب Google) مباشرة
+    const email = user.email || "";
+    const photoURL = user.photoURL || "";
 
     const userRef = db.collection("users").doc(user.uid);
 
@@ -1931,7 +1481,8 @@ function saveAccountName() {
 
             const payload = {
                 name: name,
-                phone: phone,
+                email: email,
+                photoURL: photoURL,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
@@ -1948,7 +1499,11 @@ function saveAccountName() {
 
         .then(function () {
 
-            currentUserProfile = { name: name, phone: phone };
+            currentUserProfile = {
+                name: name,
+                email: email,
+                photoURL: photoURL
+            };
 
             updateAccountNavState(user);
 
@@ -1982,11 +1537,17 @@ function saveAccountName() {
 
 function renderProfileView(user, profile) {
 
-    const name = (profile && profile.name) ? profile.name : "";
+    const name = (profile && profile.name)
+        ? profile.name
+        : ((user && user.displayName) ? user.displayName : "");
 
-    const phone = (user && user.phoneNumber)
-        ? user.phoneNumber
-        : ((profile && profile.phone) ? profile.phone : "");
+    const email = (user && user.email)
+        ? user.email
+        : ((profile && profile.email) ? profile.email : "");
+
+    const photoURL = (user && user.photoURL)
+        ? user.photoURL
+        : ((profile && profile.photoURL) ? profile.photoURL : "");
 
     const nameEl = document.getElementById("accountNameDisplay");
 
@@ -1997,13 +1558,25 @@ function renderProfileView(user, profile) {
     const avatarEl = document.getElementById("accountAvatar");
 
     if (avatarEl) {
-        avatarEl.textContent = name ? name.charAt(0) : "👤";
+
+        if (photoURL) {
+
+            avatarEl.textContent = "";
+            avatarEl.style.backgroundImage = "url('" + photoURL + "')";
+            avatarEl.classList.add("has-photo");
+
+        } else {
+
+            avatarEl.style.backgroundImage = "";
+            avatarEl.classList.remove("has-photo");
+            avatarEl.textContent = name ? name.charAt(0) : "👤";
+        }
     }
 
-    const phoneEl = document.getElementById("accountPhoneDisplay");
+    const emailEl = document.getElementById("accountEmailDisplay");
 
-    if (phoneEl) {
-        phoneEl.textContent = formatPhoneForDisplay(phone) || "—";
+    if (emailEl) {
+        emailEl.textContent = email || "—";
     }
 
     const joinedEl = document.getElementById("accountJoined");
@@ -2034,7 +1607,7 @@ function updateAccountNavState(user) {
     const name =
         (user && currentUserProfile && currentUserProfile.name)
             ? String(currentUserProfile.name).trim()
-            : "";
+            : ((user && user.displayName) ? String(user.displayName).trim() : "");
 
     if (!name) {
 
@@ -2054,14 +1627,9 @@ function updateAccountNavState(user) {
 
 function resetAccountState() {
 
-    confirmationResult = null;
-    pendingPhoneNumber = "";
     currentUserProfile = null;
 
-    stopOtpResendTimer();
-    resetRecaptchaVerifier();
-
-    const fieldIds = ["accountPhone", "accountOtp", "accountNameInput"];
+    const fieldIds = ["accountNameInput"];
 
     fieldIds.forEach(function (fieldId) {
 
@@ -2072,10 +1640,6 @@ function resetAccountState() {
         }
     });
 
-    updatePhonePreview("");
-
-    hideAccountError("accountPhoneError");
-    hideAccountError("accountOtpError");
     hideAccountError("accountNameError");
     hideAccountGeneralError();
 
@@ -2153,8 +1717,6 @@ function closeAccountModal() {
 // ========================================
 
 function initAccountAuth() {
-
-    bindAccountInputs();
 
     if (!window.auth) {
 

@@ -10,7 +10,7 @@
 //
 // Services initialized:
 //   - Cloud Firestore (database for cargo/load requests)
-//   - Firebase Authentication (phone number sign-in: OTP code via SMS)
+//   - Firebase Authentication (Google Sign-In)
 //
 // Services NOT needed (not initialized):
 //   - Firebase Storage (no file uploads in the app)
@@ -38,7 +38,7 @@ window.db = db;
 window.firebaseApp = firebaseApp;
 
 // ========================================
-// Firebase Authentication (تسجيل الدخول برقم الهاتف)
+// Firebase Authentication (تسجيل الدخول بحساب Google)
 // ========================================
 // ملاحظة: تهيئة Auth آمنة — إذا ظهر خطأ invalid-api-key
 // (مثلاً لأن نطاق الموقع غير مضاف لقيود المفتاح في

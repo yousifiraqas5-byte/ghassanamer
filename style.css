@@ -331,15 +331,15 @@ main {
 
     margin-bottom: 13px;
 
-    display: flex;
-
-    justify-content: space-between;
+    display: inline-flex;
 
     align-items: center;
 
-    gap: 16px;
+    gap: 10px;
 
     flex-wrap: wrap;
+
+    width: fit-content;
 }
 
 .load-route .route-half {

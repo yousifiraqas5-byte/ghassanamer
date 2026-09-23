@@ -46,6 +46,7 @@ window.firebaseApp = firebaseApp;
 // ويظهر سبب المشكلة في الكونsole بدل توقّف الصفحة.
 
 let auth = null;
+let authError = null;
 
 try {
 
@@ -56,7 +57,9 @@ try {
     // Arabic messages in script.js for the important cases)
     auth.languageCode = "ar";
 
-} catch (authError) {
+} catch (err) {
+
+    authError = err;
 
     console.error(
         "حمولتي - فشل تهيئة Firebase Authentication:",
